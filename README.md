@@ -1,0 +1,1 @@
+Following Andrej Karpathy's micrograd video.
