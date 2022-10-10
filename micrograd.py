@@ -12,6 +12,8 @@ def convert_second_param_to_Value(f):
 class Value:
     def __init__(self, data, _children=(), op="", label=""):
         self.data = data
+        self.grad = 0
+        self._backward = lambda: None
         self._prev = set(_children)
         self._op = op
         self.label = label
@@ -21,14 +23,25 @@ class Value:
 
     @convert_second_param_to_Value
     def __add__(self, other):
-        return Value(data=self.data + other.data, _children=(self, other), op="+")
+        out = Value(data=self.data + other.data, _children=(self, other), op="+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+
+        out._backward = _backward
+        return out
 
     def __radd__(self, other):
         return Value(data=self.data + other, _children=(self, other), op="+")
 
     @convert_second_param_to_Value
     def __mul__(self, other):
-        return Value(data=self.data * other.data, _children=(self, other), op="*")
+        out = Value(data=self.data * other.data, _children=(self, other), op="*")
+        def _backward():
+            self.grad += other.data*out.grad
+            other.grad += self.data*out.grad
+        out._backward = _backward
+        return out
 
     def __rmul__(self, other):
         return Value(data=self.data * other, _children=(self, other), op="*")

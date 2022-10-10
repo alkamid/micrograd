@@ -39,3 +39,35 @@ def test_power_values():
 
     assert (a**3).data == 27
     assert (a**0).data == 1
+
+
+def test_add_backward():
+    a = Value(8)
+    b = Value(-4)
+    c = a+b
+    c.grad = 3.
+    c._backward()
+    assert a.grad == b.grad == 3
+
+    a = Value(8)
+    c = a+a
+    c.grad = 3.
+    c._backward()
+    assert a.grad == 6
+
+def test_mult_backward():
+    a = Value(8)
+    b = Value(4)
+    c = b*a
+
+    c.grad = 1.
+    c._backward()
+    assert a.grad == 4
+    assert b.grad == 8
+
+    a = Value(-3)
+    c = a*a
+    
+    c.grad = 1.
+    c._backward()
+    assert a.grad == -6
