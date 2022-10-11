@@ -49,6 +49,15 @@ def test_power_values():
     assert (a**0).data == 1
 
 
+def test_tanh():
+    a = Value(0.8814)
+    assert pytest.approx(a.tanh().data) == 0.7071199
+
+    b = a.tanh()
+    b.backward()
+    assert pytest.approx(a.grad, abs=1e-4) == 0.5
+
+
 def test_add_backward():
     a = Value(8)
     b = Value(-4)

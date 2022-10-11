@@ -79,6 +79,21 @@ class Value:
         out._backward = _backward
         return out
 
+    def exp(self):
+        out = Value(data=math.exp(self.data), _children=(self,), op="exp")
+        def _backward():
+            self.grad += math.exp(self.data) * out.grad
+        out._backward = _backward
+        return out
+
+    def tanh(self):
+        e = math.exp(2*self.data)
+        out = Value(data=(e-1)/(e+1), _children=(self,), op="tanh")
+        def _backward():
+            self.grad += (1 - self.tanh().data**2) * out.grad
+        out._backward = _backward
+        return out
+
 def topological_sort(value: Value, sorted_list: Optional[list] = None) -> list[Value]:
     if sorted_list is None:
         sorted_list = []
