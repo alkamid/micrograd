@@ -38,6 +38,13 @@ class Value:
         out._backward = _backward
         return out
 
+    @convert_second_param_to_Value
+    def __sub__(self, other):
+        return Value(data=self.data - other.data, _children=(self, other), op="-")
+
+    def __rsub__(self, other):
+        return Value(data=self.data - other, _children=(self, other), op="-")
+
     def __radd__(self, other):
         return Value(data=self.data + other, _children=(self, other), op="+")
 
@@ -64,6 +71,8 @@ class Value:
             return Value(data=self.data * other**-1, _children=(self, other), op="/")
 
     def __pow__(self, other):
+        if not isinstance(other, (int, float)):
+            raise ValueError(f"Raising Values to powers only works with integer and float powers for now. Got {type(other)=}")
         out = Value(data=math.pow(self.data, other), _children=(self, ), op="**")
         def _backward():
             self.grad += other*self.data**(other-1)*out.grad

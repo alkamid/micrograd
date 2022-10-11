@@ -11,6 +11,14 @@ def test_adding_values():
     assert (5+a).data == 9
     assert (a+0).data == a.data
 
+def test_subtracting_values():
+    a = Value(3.)
+    b = Value(5.)
+    assert (a-b).data == -2
+    assert (a-3).data == 0
+    assert (3-a).data == 0
+
+
 def test_multiplying_values():
     a = Value(4)
     b = Value(3)
