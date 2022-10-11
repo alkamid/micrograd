@@ -1,4 +1,4 @@
-from micrograd import Value
+from micrograd import Value, topological_sort
 
 import pytest
 
@@ -71,3 +71,36 @@ def test_mult_backward():
     c.grad = 1.
     c._backward()
     assert a.grad == -6
+
+
+def test_pow_backward():
+    a = Value(-3)
+    c = a**3
+
+    c.grad = 1.
+    c._backward()
+    assert a.grad == 3*(-3)**2
+
+
+def test_multistep_backward():
+    a = Value(-3)
+    b = Value(2)
+    c = a*b
+    d = Value(2)
+    e = c+d
+    e.backward()
+    assert a.grad == 2
+    assert b.grad == -3
+    assert c.grad == d.grad == 1.
+
+
+def test_topological_sort():
+    a = Value(2)
+    b = Value(3)
+    c = a*b
+    d = Value(4)
+    e = d*c
+    f = e**2
+    top_sort = list(reversed(topological_sort(f)))
+    assert top_sort[:2] == [f, e]
+    assert set(top_sort[2:]) == set([a,b,c,d])

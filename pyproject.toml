@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.10"
 numpy = "^1.23.3"
 matplotlib = "^3.5.3"
+pudb = "^2022.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

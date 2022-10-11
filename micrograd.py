@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 def convert_second_param_to_Value(f):
     """
@@ -17,6 +18,12 @@ class Value:
         self._prev = set(_children)
         self._op = op
         self.label = label
+
+    def backward(self) -> None:
+        values_ordered = reversed(topological_sort(self, []))
+        self.grad = 1.
+        for val in values_ordered:
+            val._backward()
 
     def __repr__(self):
         return f"{self.__class__.__name__}(data={self.data})"
@@ -57,15 +64,17 @@ class Value:
             return Value(data=self.data * other**-1, _children=(self, other), op="/")
 
     def __pow__(self, other):
-        return Value(data=math.pow(self.data, other), _children=(self, other), op="**")
+        out = Value(data=math.pow(self.data, other), _children=(self, ), op="**")
+        def _backward():
+            self.grad += other*self.data**(other-1)*out.grad
+        out._backward = _backward
+        return out
 
-
-
-a = Value(2.0)
-b = Value(3.0)
-c = a*b
-
-print(c._prev)
-
-print(a*b)
-print(a+b)
+def topological_sort(value: Value, sorted_list: Optional[list] = None) -> list[Value]:
+    if sorted_list is None:
+        sorted_list = []
+    if value not in sorted_list:
+        for ch in value._prev:
+            topological_sort(ch, sorted_list)
+        sorted_list.append(value)
+    return sorted_list
