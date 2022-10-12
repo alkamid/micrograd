@@ -1,4 +1,6 @@
+from collections.abc import Iterable
 import math
+from random import random
 from typing import Optional
 
 def convert_second_param_to_Value(f):
@@ -102,3 +104,27 @@ def topological_sort(value: Value, sorted_list: Optional[list] = None) -> list[V
             topological_sort(ch, sorted_list)
         sorted_list.append(value)
     return sorted_list
+
+
+def dot(a: Iterable, b: Iterable) -> float:
+    return sum(elem1*elem2 for elem1, elem2 in zip(a,b))
+
+
+class Neuron:
+    def __init__(self, nin: int):
+        self.w = [Value(random.uniform(-1, 1)) for _ in range(nin)]
+        self.b = Value(random.uniform(-1, 1))
+
+    def __call__(self, x: Iterable) -> Value:
+        act = dot(self.w, x) + self.b
+        return act.tanh()
+
+class Layer:
+    def __init__(self, nin: int, nout: int):
+        self.neurons = [Neuron(nin) for _ in range(nout)]
+
+    def __call__(self, x):
+        return [neuron(x) for neuron in self.neurons]
+
+
+        

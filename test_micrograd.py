@@ -1,4 +1,4 @@
-from micrograd import Value, topological_sort
+from micrograd import *
 
 import pytest
 
@@ -121,3 +121,13 @@ def test_topological_sort():
     top_sort = list(reversed(topological_sort(f)))
     assert top_sort[:2] == [f, e]
     assert set(top_sort[2:]) == set([a,b,c,d])
+
+
+def test_dot_product():
+    a = [Value(3), Value(2)]
+    b = [Value(2), Value(-1)]
+    assert dot(a, b).data == 6 - 2
+
+def test_neuron():
+    n = Neuron(3)
+    assert len(n.w) == 3
