@@ -117,6 +117,9 @@ class Neuron:
         act = dot(self.w, x) + self.b
         return act.tanh()
 
+    def __repr__(self) -> str:
+        return f"self.__class__.name({self.nin=})"
+
 class Layer:
     def __init__(self, nin: int, nout: int):
         self.neurons = [Neuron(nin) for _ in range(nout)]
