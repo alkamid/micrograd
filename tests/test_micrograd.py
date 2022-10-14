@@ -132,3 +132,4 @@ def test_dot_product():
 def test_neuron():
     n = Neuron(3)
     assert len(n.w) == 3
+    assert 0 <= n.b.data <= 1
