@@ -125,4 +125,6 @@ class Layer:
         return [neuron(x) for neuron in self.neurons]
 
 
-        
+def dot_product(a, b) -> float:
+    return sum(elem1*elem2 for elem1, elem2 in zip(a,b))
+
