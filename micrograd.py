@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 import math
-from random import random
+import random
 from typing import Optional
 
 def convert_second_param_to_Value(f):

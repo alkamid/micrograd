@@ -14,6 +14,9 @@ pudb = "^2022.1.2"
 [tool.poetry.dev-dependencies]
 pytest = "*"
 
+[tool.poetry.group.dev.dependencies]
+coverage = "^6.5.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
