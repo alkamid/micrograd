@@ -96,9 +96,7 @@ class Value:
         out._backward = _backward
         return out
 
-def topological_sort(value: Value, sorted_list: Optional[list] = None) -> list[Value]:
-    if sorted_list is None:
-        sorted_list = []
+def topological_sort(value: Value, sorted_list: list = []) -> list[Value]:
     if value not in sorted_list:
         for ch in value._prev:
             topological_sort(ch, sorted_list)
