@@ -11,12 +11,14 @@ numpy = "^1.23.3"
 matplotlib = "^3.5.3"
 pudb = "^2022.1.2"
 ipython = "^8.6.0"
+pre-commit = "^2.20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^6.5.0"
+mypy = "^0.991"
 
 [build-system]
 requires = ["poetry-core"]

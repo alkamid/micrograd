@@ -144,6 +144,7 @@ def test_mse():
     y_pred = [1., 1., 0., 0.]
     assert mse(y_true, y_pred) == 2
 
+
 def test_mlp_backprop():
     y_true = [0.1, 0.2, 0.3, 0.4]
     x_in = [[1,2,3], [2,3,4], [3,2,1], [4,5,6]]
