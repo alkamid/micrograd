@@ -6,10 +6,11 @@ authors = ["alkamid"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 numpy = "^1.23.3"
 matplotlib = "^3.5.3"
 pudb = "^2022.1.2"
+ipython = "^8.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

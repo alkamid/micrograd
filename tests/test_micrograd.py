@@ -132,4 +132,28 @@ def test_dot_product():
 def test_neuron():
     n = Neuron(3)
     assert len(n.w) == 3
-    assert 0 <= n.b.data <= 1
+    assert -1 <= n.b.data <= 1
+
+
+def test_mse():
+    y_true = [1., 1., 1., 1.]
+    
+    y_pred = [1., 1., 1., 1.]
+    assert mse(y_true, y_pred) == 0
+
+    y_pred = [1., 1., 0., 0.]
+    assert mse(y_true, y_pred) == 2
+
+def test_mlp_backprop():
+    y_true = [0.1, 0.2, 0.3, 0.4]
+    x_in = [[1,2,3], [2,3,4], [3,2,1], [4,5,6]]
+    mlp = MLP(len(x_in[0]), [3,3,1])
+    y_pred = [mlp(x) for x in x_in]
+    loss = mse(y_true, y_pred)
+    loss1 = loss.data
+    loss.backward()
+    for p in mlp.parameters():
+        p.data -= 0.01*p.grad
+    
+    loss2 = mse(y_true, [mlp(x) for x in x_in]).data
+    assert loss2 < loss1

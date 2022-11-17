@@ -15,7 +15,7 @@ def convert_second_param_to_Value(f):
 class Value:
     def __init__(self, data, _children=(), op="", label=""):
         self.data = data
-        self.grad = 0
+        self.grad = 0.
         self._backward = lambda: None
         self._prev = set(_children)
         self._op = op
@@ -30,6 +30,9 @@ class Value:
     def __repr__(self):
         return f"{self.__class__.__name__}(data={self.data})"
 
+    def __neg__(self):
+        return -1 * self
+
     @convert_second_param_to_Value
     def __add__(self, other):
         out = Value(data=self.data + other.data, _children=(self, other), op="+")
@@ -42,13 +45,13 @@ class Value:
 
     @convert_second_param_to_Value
     def __sub__(self, other):
-        return Value(data=self.data - other.data, _children=(self, other), op="-")
+        return self + (-other)
 
     def __rsub__(self, other):
-        return Value(data=self.data - other, _children=(self, other), op="-")
+        return other + (-self)
 
     def __radd__(self, other):
-        return Value(data=self.data + other, _children=(self, other), op="+")
+        return self + other
 
     @convert_second_param_to_Value
     def __mul__(self, other):
@@ -60,17 +63,13 @@ class Value:
         return out
 
     def __rmul__(self, other):
-        return Value(data=self.data * other, _children=(self, other), op="*")
+        return self * other
 
-    @convert_second_param_to_Value
     def __truediv__(self, other):
-        return Value(data=self.data * other.data**-1, _children=(self, other), op="/")
+        return self * other**-1
 
     def __rtruediv__(self, other):
-        if other == 0:
-            return Value(data=0)
-        else:
-            return Value(data=self.data * other**-1, _children=(self, other), op="/")
+        return other * self**-1
 
     def __pow__(self, other):
         if not isinstance(other, (int, float)):
@@ -119,12 +118,36 @@ class Neuron:
         act = dot(self.w, x) + self.b
         return act.tanh()
 
+    def parameters(self) -> list[Value]:
+        return self.w + [self.b]
+
 class Layer:
     def __init__(self, nin: int, nout: int):
         self.neurons = [Neuron(nin) for _ in range(nout)]
 
-    def __call__(self, x):
+    def __call__(self, x) -> list[Value]:
         return [neuron(x) for neuron in self.neurons]
 
+    def parameters(self) -> list[Value]:
+        return [p for neuron in self.neurons for p in neuron.parameters()]
 
-        
+class MLP:
+    def __init__(self, nin: int, nouts: list[int]):
+        sizes = [nin] + nouts
+        self.layers = [Layer(sizes[i], sizes[i+1]) for i in range(len(nouts))]
+
+    def __call__(self, x) -> list[Value]:
+        for layer in self.layers:
+            x = layer(x)
+        return x[0] if len(x) == 1 else x
+
+    def parameters(self) -> list[Value]:
+        return [p for layer in self.layers for p in layer.parameters()]
+
+
+def mse(y_true, y_pred) -> Value:
+    return sum([(yp - yt)**2 for yt, yp in zip(y_true, y_pred)])
+
+
+def backprop(mlp: MLP, loss) -> None:
+    ...
